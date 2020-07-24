@@ -1,18 +1,18 @@
 class Move
   attr_reader :value
 
-  WIN = {'rock' => ['lizard','scissors'],
-         'paper' => ['spock','rock'],
+  WIN = {'rock' => ['lizard', 'scissors'],
+         'paper' => ['spock', 'rock'],
          'scissors' => ['paper', 'lizard'],
          'lizard' => ['spock', 'paper'],
-         'spock' => ['scissors','rock'] }
+         'spock' => ['scissors', 'rock'] }
 
   def to_s
     @value.capitalize
   end
 
   def >(other)
-    WIN[self.value].include?(other.value)
+    WIN[value].include?(other.value)
   end
 end
 
@@ -69,7 +69,7 @@ class Human < Player
     self.name = n.capitalize
   end
 
-  def choose 
+  def choose
     choice = nil
     loop do
       puts "Please choose rock, paper, scissors, spock, lizard:"
@@ -82,16 +82,16 @@ class Human < Player
 end
 
 class Computer < Player
-  PERSONALITIES = {'Robot' => [Rock.new, Paper.new, Scissors.new, Spock.new, Lizard.new],
-                   'R2D2' => [Rock.new, Paper.new, Scissors.new, Lizard.new, Lizard.new],
-                   'RPSBOT' => [Rock.new]}
+  PERSONALITIES = { 'Robot' => [Rock.new, Paper.new, Scissors.new, Spock.new, Lizard.new],
+                   'R2D2' => [Rock.new, Paper.new, Scissors.new, Lizard.new],
+                   'RPSBOT' => [Rock.new] }
 
   def set_name
     self.name = ['Robot', 'R2D2', 'RPSBOT'].sample
   end
 
   def choose
-    self.move =  case self.name
+    self.move =  case name
                  when 'Robot' then PERSONALITIES['Robot'].sample
                  when 'R2D2' then PERSONALITIES['R2D2'].sample
                  when 'RPSBOT' then PERSONALITIES['RPSBOT'].sample
@@ -115,7 +115,7 @@ class RPSGame
   def displayer_welcome_message
     puts "Welcome to Rock Paper Scissors! (Lizard-Spock Edition)"
   end
-  
+
   def display_moves
     puts "#{human.name} chose #{human.move}!"
     puts "#{computer.name} chose #{computer.move}!"
