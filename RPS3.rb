@@ -1,11 +1,11 @@
 class Move
+  attr_reader :value
+
   WIN = {'rock' => ['lizard','scissors'],
          'paper' => ['spock','rock'],
          'scissors' => ['paper', 'lizard'],
          'lizard' => ['spock', 'paper'],
          'spock' => ['scissors','rock'] }
-
-  attr_reader :value
 
   def to_s
     @value.capitalize
@@ -147,7 +147,7 @@ class RPSGame
     human.score == 10 || computer.score == 10
   end
 
-  def display_round_winner
+  def display_match_winner
     if human.score == 10
       puts "Score is HUMAN: #{human.score} - COMPUTER: #{computer.score}, HUMAN WINS"
     else
@@ -175,7 +175,7 @@ class RPSGame
   end
 
   def game_final_methods
-    display_round_winner
+    display_match_winner
     human.score = 0
     computer.score = 0
     display_moves_log if view_moves_log?
@@ -194,17 +194,20 @@ class RPSGame
     ans == 'y'
   end
 
+  def round_methods
+    human.choose # HUMAN PLAYER CHOOSES MOVE
+    computer.choose # COMPUTER CHOOSES MOVE
+    system('clear') || system('cls') # CLEARS TERMINAL
+    display_moves # DISPLAYS PLAYERS MOVES
+    display_winner # DISPLAYERS WINNER
+    increment_scores # INCREASES WINNER SCORE BY 1
+    log_moves # ADDS MOVES TO LOG
+  end
+
   def play
     display_welcome_message
-
-    loop do #MAIN GAME LOOP
-      human.choose #HUMAN PLAYER CHOOSES MOVE
-      computer.choose #COMPUTER CHOOSES MOVE
-      system('clear') || system('cls') #CLEARS TERMINAL
-      display_moves #DISPLAYS PLAYERS MOVES
-      display_winner #DISPLAYERS WINNER 
-      increment_scores #INCREASES WINNER SCORE BY 1
-      log_moves #ADDS MOVES TO LOG
+    loop do # MAIN GAME LOOP
+      round_methods
       display_score unless winner?
       if winner?
         game_final_methods
@@ -213,7 +216,6 @@ class RPSGame
       next
     end
   end
-
 end
 
 RPSGame.new.play
