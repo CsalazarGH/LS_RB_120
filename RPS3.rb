@@ -112,10 +112,6 @@ class RPSGame
     puts "Welcome to the game #{human.name}!"
   end
 
-  def displayer_welcome_message
-    puts "Welcome to Rock Paper Scissors! (Lizard-Spock Edition)"
-  end
-
   def display_moves
     puts "#{human.name} chose #{human.move}!"
     puts "#{computer.name} chose #{computer.move}!"
