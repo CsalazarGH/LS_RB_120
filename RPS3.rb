@@ -48,6 +48,7 @@ end
 
 class Player
   CHOICES = ['rock', 'paper', 'scissors', 'spock', 'lizard']
+  CLASSES = [Rock.new, Paper.new, Scissors.new, Spock.new, Lizard.new]
 
   attr_accessor :name, :move, :score
 
@@ -77,7 +78,7 @@ class Human < Player
       break if CHOICES.include?(choice)
       puts "Invalid Choice, choose again."
     end
-    self.move = [Rock.new, Paper.new, Scissors.new, Spock.new, Lizard.new][CHOICES.index(choice)]
+    self.move = CLASSES[CHOICES.index(choice)]
   end
 end
 
