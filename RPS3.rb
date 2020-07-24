@@ -1,11 +1,11 @@
 class Move
   attr_reader :value
 
-  WIN = {'rock' => ['lizard', 'scissors'],
-         'paper' => ['spock', 'rock'],
-         'scissors' => ['paper', 'lizard'],
-         'lizard' => ['spock', 'paper'],
-         'spock' => ['scissors', 'rock'] }
+  WIN = { 'rock' => ['lizard', 'scissors'],
+          'paper' => ['spock', 'rock'],
+          'scissors' => ['paper', 'lizard'],
+          'lizard' => ['spock', 'paper'],
+          'spock' => ['scissors', 'rock'] }
 
   def to_s
     @value.capitalize
@@ -83,8 +83,8 @@ end
 
 class Computer < Player
   PERSONALITIES = { 'Robot' => [Rock.new, Paper.new, Scissors.new, Spock.new, Lizard.new],
-                   'R2D2' => [Rock.new, Paper.new, Scissors.new, Lizard.new],
-                   'RPSBOT' => [Rock.new] }
+                    'R2D2' => [Rock.new, Paper.new, Scissors.new, Lizard.new],
+                    'RPSBOT' => [Rock.new] }
 
   def set_name
     self.name = ['Robot', 'R2D2', 'RPSBOT'].sample
@@ -149,9 +149,11 @@ class RPSGame
 
   def display_match_winner
     if human.score == 10
-      puts "Score is HUMAN: #{human.score} - COMPUTER: #{computer.score}, HUMAN WINS"
+      display_score
+      puts "THE HUMAN WINS THIS ROUND!"
     else
-      puts "Score is HUMAN: #{human.score} - COMPUTER: #{computer.score}, COMPUTER WINS"
+      display_score
+      puts "THE COMPUTER WINS THIS ROUND!"
     end
   end
 
