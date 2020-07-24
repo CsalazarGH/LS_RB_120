@@ -121,10 +121,18 @@ class RPSGame
     puts "#{computer.name} chose #{computer.move}!"
   end
 
+  def human_won?
+    human.move > computer.move
+  end
+
+  def computer_won?
+    computer.move > human.move
+  end
+
   def display_winner
-    if human.move > computer.move
+    if human_won?
       puts "#{human.name} won! #{human.move} beats #{computer.move}!"
-    elsif computer.move > human.move
+    elsif computer_won?
       puts "#{computer.name} won! #{computer.move} beats #{human.move}!"
     else
       puts "It was a tie! Nobody won"
