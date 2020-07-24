@@ -83,7 +83,7 @@ class Human < Player
 end
 
 class Computer < Player
-  PERSONALITIES = { 'Robot' => [Rock.new, Paper.new, Scissors.new, Spock.new, Lizard.new],
+  PERSONALITIES = { 'Robot' => CLASSES,
                     'R2D2' => [Rock.new, Paper.new, Scissors.new, Lizard.new],
                     'RPSBOT' => [Rock.new] }
 
