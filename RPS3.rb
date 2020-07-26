@@ -56,6 +56,10 @@ class Player
     set_name
     @score = 0
   end
+
+  def match_winner?(num)
+    score == num
+  end
 end
 
 class Human < Player
@@ -64,7 +68,7 @@ class Human < Player
     loop do
       puts "What's your name?"
       n = gets.chomp
-      break unless n.empty?
+      break unless n.empty? || n.chars[0].is_a?(String) == false
       puts "sorry please enter a name."
     end
     self.name = n.capitalize
@@ -164,7 +168,7 @@ class RPSGame
   end
 
   def winner?
-    human.score == @rounds_number || computer.score == @rounds_number
+    human.match_winner?(@rounds_number) || computer.match_winner?(@rounds_number)
   end
 
   def display_match_winner
