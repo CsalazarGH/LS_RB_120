@@ -62,7 +62,7 @@ class Human < Player
   def set_name # HUMAN SET NAME METHOD
     n = nil
     loop do
-      puts "What's you're name?"
+      puts "What's your name?"
       n = gets.chomp
       break unless n.empty?
       puts "sorry please enter a name."
@@ -72,11 +72,11 @@ class Human < Player
 
   def choose
     choice = nil
+    puts "Please choose rock, paper, scissors, spock, lizard:"
     loop do
-      puts "Please choose rock, paper, scissors, spock, lizard:"
       choice = gets.chomp.downcase
       break if CHOICES.include?(choice)
-      puts "Invalid Choice, choose again."
+      puts "Invalid Choice. Choose Rock, paper, scissors, spock or Lizard"
     end
     self.move = CLASSES[CHOICES.index(choice)]
   end
@@ -101,12 +101,27 @@ class Computer < Player
 end
 
 class RPSGame
-  attr_accessor :human, :computer
+  attr_accessor :human, :computer, :rounds_number
 
   def initialize
     @human = Human.new
     @computer = Computer.new
-    @@moves_log = []
+    @moves_log = []
+    @rounds_number = nil
+  end
+
+  def two_option_answer(string, options, type)
+    ans = ''
+    puts string
+    loop do
+      ans = case type
+            when 'str' then gets.chomp.downcase
+            else gets.chomp.to_i
+            end
+      break if options.include?(ans)
+      puts "Please enter #{options.join(' or ')}."
+    end
+    ans
   end
 
   def display_welcome_message
@@ -149,36 +164,30 @@ class RPSGame
   end
 
   def winner?
-    human.score == 10 || computer.score == 10
+    human.score == @rounds_number || computer.score == @rounds_number
   end
 
   def display_match_winner
-    if human.score == 10
-      display_score
+    display_score
+    if human.score == @rounds_number
       puts "THE HUMAN WINS THIS ROUND!"
     else
-      display_score
       puts "THE COMPUTER WINS THIS ROUND!"
     end
   end
 
   def play_again?
-    answer = nil
-    loop do
-      puts "Would you like to play again? (Y or N)"
-      answer = gets.chomp.downcase
-      break if ['y', 'n'].include?(answer)
-      puts "Please enter Y or N."
-    end
-    answer == 'y' ? true : false
+    string = "Would you like to play again? (Y or N)"
+    answer = two_option_answer(string, ['y', 'n'], 'str')
+    answer == 'y'
   end
 
   def log_moves
-    @@moves_log << "HUMAN MOVE: #{human.move} - COMP MOVE: #{computer.move}"
+    @moves_log << "HUMAN MOVE: #{human.move} - COMP MOVE: #{computer.move}"
   end
 
   def display_moves_log
-    puts @@moves_log
+    puts @moves_log
   end
 
   def game_final_methods
@@ -186,39 +195,47 @@ class RPSGame
     human.score = 0
     computer.score = 0
     display_moves_log if view_moves_log?
-    @@moves_log = []
-    puts '-' * 15
+    @moves_log = []
+    @rounds_number = nil
+    puts '------------------------------'
   end
 
   def view_moves_log?
-    ans = ''
-    loop do
-      puts "Would you like to view the moves log?(Y or N):"
-      ans = gets.chomp.downcase
-      break if ['y', 'n'].include?(ans)
-      puts "Please enter Y or N"
-    end
-    ans == 'y'
+    string = "Would you like to view the moves log?(Y or N):"
+    answer = two_option_answer(string, ['y', 'n'], 'str')
+    answer == 'y'
   end
 
-  def round_methods
-    human.choose # HUMAN PLAYER CHOOSES MOVE
-    computer.choose # COMPUTER CHOOSES MOVE
-    system('clear') || system('cls') # CLEARS TERMINAL
-    display_moves # DISPLAYS PLAYERS MOVES
-    display_winner # DISPLAYERS WINNER
-    increment_scores # INCREASES WINNER SCORE BY 1
-    log_moves # ADDS MOVES TO LOG
+  def clear_terminal
+    system('clear') || system('cls')
+  end
+
+  def game_round
+    human.choose
+    computer.choose
+    clear_terminal
+    display_moves
+    display_winner
+    increment_scores
+    log_moves
+  end
+
+  def choose_winning_number
+    string = "How many rounds to win? 5 or 10?"
+    number = two_option_answer(string, [5, 10], 'int')
+    @rounds_number = number.to_i
   end
 
   def play
     display_welcome_message
-    loop do # MAIN GAME LOOP
-      round_methods
+    loop do
+      choose_winning_number if @moves_log.empty?
+      game_round
       display_score unless winner?
       if winner?
         game_final_methods
         break unless play_again?
+        clear_terminal
       end
       next
     end
