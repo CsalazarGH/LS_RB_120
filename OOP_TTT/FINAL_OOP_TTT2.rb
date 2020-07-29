@@ -16,7 +16,7 @@ class Board
   def ai_mover(marker)
     move = nil
     WINNING_LINES.each do |line|
-      markers = [@squares[line[0]].marker, @squares[line[1]].marker, @squares[line[2]].marker] 
+      markers = [@squares[line[0]].marker, @squares[line[1]].marker, @squares[line[2]].marker]
       if markers.count(marker) == 2 && markers.count(INITIAL_MARKER) == 1
         move = line[markers.index(' ')]
       end
@@ -152,10 +152,10 @@ class TTTGame
     board[ans] = human.marker
   end
 
-  def computer_moves  
-    num = if board.ai_mover(computer.marker) 
+  def computer_moves
+    num = if board.ai_mover(computer.marker)
             board.ai_mover(computer.marker)
-          elsif board.ai_mover(human.marker) 
+          elsif board.ai_mover(human.marker)
             board.ai_mover(human.marker)
           elsif board.middle_empty?
             5
@@ -201,13 +201,6 @@ class TTTGame
     system('clear') || system('cls')
   end
 
-  def reset_game
-    @board = Board.new
-    @turn = nil
-    clear_terminal
-    puts "Lets play again!"
-  end
-
   def current_player_moves
     if @turn == 'human'
       human_moves
@@ -218,18 +211,9 @@ class TTTGame
     end
   end
 
-  def game_round
-    loop do
-      current_player_moves
-      break if someone_won? || board_full?
-      display_board
-    end
-  end
-
   def match_winner?
     [human.score, computer.score].include?(5)
   end
-
 
   def goes_first?
     ans = nil
@@ -254,7 +238,7 @@ class TTTGame
 
   def next_round
     puts "Press any key to move onto the next round!"
-    1.times {gets.chomp}
+    1.times { gets.chomp }
   end
 
   def display_score
@@ -319,36 +303,44 @@ class TTTGame
                       end
   end
 
+  def game_setup
+    goes_first?
+    x_or_o
+    clear_terminal
+    display_player_markers
+  end
+
+  def game_round
+    loop do
+      current_player_moves
+      display_board if human_turn?
+      increment_winner_score
+      break if match_winner?
+      if someone_won_round? || board_full?
+        display_board
+        display_round_result
+        display_score
+        new_round
+        next
+      end
+    end
+  end
+  
   def play
     clear_terminal
     display_welcome_message
-      loop do # LOOP 1 - THIS LOOP WILL RUN AS LONG AS THE PLAYER WANTS TO PLAY NEW MATCHES
-        goes_first?
-        x_or_o
-        clear_terminal
-        display_player_markers
-        loop do # LOOP 2 - - THIS LOOP WILL GO FOR 5 ROUNDS AND THEN BREAK
-          current_player_moves
-          display_board if human_turn?
-          increment_winner_score
-          break if match_winner?
-          if someone_won_round? || board_full?
-            display_board
-            display_round_result
-            display_score
-            new_round
-            next
-          end
-        end #LOOP 2 END 
-        clear_terminal
-        display_final_results
-        if play_again?
-          reset_game
-          next
-        end
-        break
-      end  # LOOP 1 ENDs                 
-  end 
+    loop do
+      game_setup
+      game_round
+      clear_terminal
+      display_final_results
+      if play_again?
+        reset_game
+        next
+      end
+      break
+    end
+  end
 end
 
 game = TTTGame.new
