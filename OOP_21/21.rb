@@ -111,7 +111,7 @@ class Player < Participant
     puts 'Please enter your name:'
     loop do
       name = gets.chomp.capitalize
-      break if name != ''
+      break if name != '' && ('a'..'z').to_a.include?(name[0].downcase)
       puts 'Please enter a name.'
     end
     @name = name
@@ -289,14 +289,14 @@ class Game
     loop do
       clear_terminal
       display_dealer_hand(false, true)
-      prompt dealers_staying if dealer.at_least_17?
+      dealers_staying if dealer.at_least_17?
       break if dealer.bust? || dealer.at_least_17?
       hit(dealer)
       next_card
     end
   end
 
-  def main_loop
+  def both_turns_loop
     loop do
       human_loop
       break if human.bust?
@@ -310,7 +310,7 @@ class Game
     loop do
       clear_terminal
       start_game?
-      main_loop
+      both_turns_loop
       display_results
       game_reset
       break if play_again?
