@@ -123,8 +123,8 @@ class Dealer < Participant
     @name = %w(R2D2 ROBOT BOT LSBOT).sample
   end
 
-  def have_17?
-    hand_value >= 17
+  def at_least_17?
+    hand_value >= 17 && hand_value <= 21
   end
 end
 
@@ -195,6 +195,7 @@ class Game
   end
 
   def display_welcome_message
+    clear_terminal
     prompt('Welcome to the game of TWENTY-ONE!')
     prompt(line)
   end
@@ -220,7 +221,6 @@ class Game
   def display_dealer_hand(unknown=true, value=true)
     unknown_sentence = dealer.display_cards[0] + ' and unknown card.'
     visible = joinor(dealer.display_cards)
-   
     prompt("#{dealer.name}'s hand is #{unknown ? unknown_sentence : visible}")
     prompt("#{dealer.name}'s hand value is #{dealer.hand_value}") if value
     prompt(line)
@@ -235,11 +235,15 @@ class Game
     !human.bust? && !dealer.bust?
   end
 
+  def values_board
+    "#{human.hand_value} - #{dealer.hand_value}"
+  end
+
   def display_winner_or_tie
     case human.hand_value <=> dealer.hand_value
-    when 1 then prompt("#{human.name} WON! #{human.hand_value} - #{dealer.hand_value}")
-    when -1 then prompt("#{dealer.name} WON! #{dealer.hand_value} - #{human.hand_value}")
-    else prompt("IT WAS A TIE! #{human.hand_value} - #{dealer.hand_value}")
+    when 1 then prompt("#{human.name} WON! #{values_board}")
+    when -1 then prompt("#{dealer.name} WON! #{values_board}")
+    else prompt("IT WAS A TIE! #{values_board}")
     end
   end
 
@@ -247,6 +251,11 @@ class Game
     prompt("YOU BUSTED! YOU LOSE!") if human.bust?
     prompt("#{dealer.name} BUSTED! DEALER LOSES!") if dealer.bust?
     display_winner_or_tie if nobody_bust
+  end
+
+  def display_both_hands
+    display_dealer_hand(true, false)
+    display_human_hand
   end
 
   def play_again?
@@ -258,18 +267,21 @@ class Game
     prompt('GOODBYE! THANKS FOR PLAYING!')
   end
 
+  def dealers_staying
+    prompt('Dealer is staying!')
+    prompt(line)
+  end
+
   def human_loop
     loop do
       clear_terminal
-      display_dealer_hand(true, false)
-      display_human_hand
+      display_both_hands
       break if human.bust?
       if hit_or_stay? == 'h'
         hit(human)
         next
-      else
-        break
       end
+      break
     end
   end
 
@@ -277,7 +289,8 @@ class Game
     loop do
       clear_terminal
       display_dealer_hand(false, true)
-      break if dealer.bust? || dealer.have_17?
+      prompt dealers_staying if dealer.at_least_17?
+      break if dealer.bust? || dealer.at_least_17?
       hit(dealer)
       next_card
     end
@@ -293,7 +306,6 @@ class Game
   end
 
   def play
-    clear_terminal
     display_welcome_message
     loop do
       clear_terminal
